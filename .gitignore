@@ -1,0 +1,11 @@
+# */__pycache__
+__pycache__
+db_creds.yaml
+local_db_creds.yaml
+notebook.ipynb
+temp.txt
+temp-m2t6-cleaning-notes.txt
+output.csv
+stores.csv
+products.csv
+date_details.csv
