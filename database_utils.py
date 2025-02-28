@@ -1,7 +1,10 @@
-import yaml
 from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 from sqlalchemy import inspect
+import pandas as pd
 import pprint
+import yaml
+
 
 class DatabaseConnector:
     '''
@@ -11,16 +14,14 @@ class DatabaseConnector:
     The methods contained will be fit to extract data from a particular data source, 
     these sources will include CSV files, an API and an S3 bucket.
 
-    Attributes: ***TO DO***
-        word(str): The word to be guessed, picked randomly from the word_list.
-        word_guessed (list): A list of the letters of the word, with _ for each letter not yet guessed.
-        list_of_guesses(list): A list of the guesses that have already been tried.
+    Attributes:
+        None
     '''
 
     def __init__(self):
         pass
 
-    def read_db_creds(self, remote=True):
+    def read_db_creds(self, remote: bool = True) -> dict:
         '''
         This method will read the credentials yaml file and return a dictionary of the credentials.
 
@@ -36,7 +37,7 @@ class DatabaseConnector:
 
         return config
     
-    def init_db_engine(self, remote=True):
+    def init_db_engine(self, remote: bool = True) -> Engine:
         '''
         This method will read the credentials from the return of read_db_creds and initialise and 
         return an sqlalchemy database engine.
@@ -60,7 +61,7 @@ class DatabaseConnector:
         engine = create_engine(f"{DATABASE_TYPE}+{DBAPI}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}", isolation_level='AUTOCOMMIT')
         return engine
 
-    def list_db_tables(self):
+    def list_db_tables(self) -> None:
         '''
         This method will to list all the tables in the database so you know which tables you 
         can extract data from.
@@ -72,15 +73,13 @@ class DatabaseConnector:
             None
         '''
         engine = self.init_db_engine()
-
-        #engine.execution_options(isolation_level='AUTOCOMMIT').connect()
-        
         inspector = inspect(engine)
+
         db_tables = inspector.get_table_names()
         pprint.pprint(db_tables)
         
 
-    def upload_to_db(self, df, table_name):
+    def upload_to_db(self, df: pd.DataFrame, table_name: str) -> None:
         '''
         This method will take in a Pandas DataFrame and table name to upload to as an argument.
 
@@ -105,14 +104,7 @@ class DatabaseConnector:
 
 def main():
     db_connector = DatabaseConnector()
-    #engine = db_connector.init_db_engine()
-    #engine.execution_options(isolation_level='AUTOCOMMIT').connect()
-    db_connector.list_db_tables()
-    
-
-    #print(type(db_cred))
-    #print(db_cred)
-    
+    db_connector.list_db_tables()   
 
 if __name__ == "__main__":
     main()

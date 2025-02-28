@@ -1,7 +1,7 @@
 from database_utils import DatabaseConnector
 from data_extraction import DataExtractor
-import pandas as pd
 import numpy as np
+import pandas as pd
 import re
 
 class DataCleaning:
@@ -13,26 +13,23 @@ class DataCleaning:
     these sources will include CSV files, an API and an S3 bucket.
 
     Attributes:
-        word(str): The word to be guessed, picked randomly from the word_list.
-        word_guessed (list): A list of the letters of the word, with _ for each letter not yet guessed.
-        list_of_guesses(list): A list of the guesses that have already been tried.
+        None
     '''
 
     # def __init__(self, param_1, param_2 = 5):
     #     pass
 
-    def clean_user_data(self, user_data_df):
+    def clean_user_data(self, user_data_df: pd.DataFrame) -> pd.DataFrame:
         '''
         This method will perform the cleaning of the user data.
 
         Args:
-            user_data_df(DataFrame): DataFrame containing...
+            user_data_df(DataFrame): DataFrame containing raw user details
 
         Returns:
-            df_with_valid_dates(DataFrame): cleaned DataFrame
+            df_with_valid_dates(DataFrame): cleaned DataFrame containing valid user details
         '''
-        #user_data_df.first_name = user_data_df.first_name.as_string()
-
+        
         # Replace all 'NULL' values in dataframe with a NaN
         user_data_df.replace('NULL', np.nan, inplace=True)
 
@@ -46,7 +43,7 @@ class DataCleaning:
         df_dropped['join_date'] = pd.to_datetime(df_dropped['join_date'], format="mixed", errors='coerce')
         df_dropped['date_of_birth'] = pd.to_datetime(df_dropped['date_of_birth'], format="mixed", errors='coerce')
 
-        #df_dropped = self.change_join_date_type(df_dropped)
+        #df_dropped = self.change_join_date_type(df_dropped) # This method is not used for now
 
         # Drop rows that contain NaT values in either of the 2 datetime columns.
         # The analysis shows that they contain invalid data in the other columns except for the index column.
@@ -62,24 +59,21 @@ class DataCleaning:
             user_data_df(DataFrame): DataFrame containing...
 
         Returns:
-            None
+            None (TBD)
         '''
         user_data_df['join_date'] = pd.to_datetime(user_data_df['join_date'], format="mixed", errors='coerce')
-        # print(user_data_df.head(3))
-        # print(user_data_df.dtypes)
-        # print(user_data_df['join_date'].value_counts())
-        # print(user_data_df['join_date'].isna().sum())
+        
         return user_data_df
         
-    def clean_card_data(self, card_data_df):
+    def clean_card_data(self, card_data_df: pd.DataFrame) -> pd.DataFrame:
         '''
         This method will clean the data to remove any erroneous values, NULL values or errors with formatting.
 
         Args:
-            card_data_df(DataFrame): DataFrame containing card details
+            card_data_df(DataFrame): DataFrame containing raw card details
 
         Returns:
-            clean_df(DataFrame): cleaned DataFrame
+            clean_df(DataFrame): cleaned DataFrame containing valid card details
         '''
         # Drop rows that contain table header information
         card_data_df.drop(card_data_df.loc[card_data_df['card_number'] == 'card_number'].index, inplace=True)
@@ -91,8 +85,6 @@ class DataCleaning:
 
         # Drop rows that do not match the MM/YY regex for expiry date
         regex = r'^(0[1-9]|1[0-2])\/\d{2}$'
-        #tabula_df_filtered = tabula_df[~tabula_df['expiry_date'].str.match(regex, na=False)]
-        #tabula_df_filtered.head(5)
         card_data_df.drop(
             card_data_df.loc[~card_data_df['expiry_date'].str.match(regex, na=False)].index, inplace=True
             )
@@ -108,7 +100,7 @@ class DataCleaning:
         print(f"The cleaned DataFrame has {len(clean_df)} rows")
         return clean_df
     
-    def clean_store_data(self, stores_data_df):
+    def clean_store_data(self, stores_data_df: pd.DataFrame)  -> pd.DataFrame:
         '''
         This method will clean the data retrieved from the API and returns a pandas DataFrame.
 
@@ -154,7 +146,7 @@ class DataCleaning:
             df (pd.DataFrame): The products DataFrame.
         
         Returns:
-            pd.DataFrame: The updated DataFrame with weight values in kg.
+            df(pd.DataFrame): The updated DataFrame with weight values in kg.
         """
         
         def convert_weight(value):
@@ -275,15 +267,11 @@ class DataCleaning:
 def main():
     db_connector = DatabaseConnector()
     data_extractor = DataExtractor()
-    table_name = 'legacy_users'
-    user_data_df = data_extractor.read_rds_table(db_connector, table_name)
-    #print(user_data_df.head(3))
-    #print(f"{len(user_data_df)} rows in legacy users dataframe")
-    #print(user_data_df.dtypes)
-
     data_cleaner = DataCleaning()
     
     # Execute Users Data Upload - RUN ONCE
+    table_name = 'legacy_users'
+    user_data_df = data_extractor.read_rds_table(db_connector, table_name)
     df = data_cleaner.clean_user_data(user_data_df)
     db_connector.upload_to_db(df, 'dim_users')
 

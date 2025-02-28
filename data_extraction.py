@@ -1,12 +1,11 @@
-# import random
-
 from database_utils import DatabaseConnector
-import pandas as pd
-from sqlalchemy import text
-import tabula
-import requests
-import boto3
 from io import StringIO
+from sqlalchemy import text
+import boto3
+import pandas as pd
+import requests
+import tabula
+
 
 class DataExtractor:
     '''
@@ -17,17 +16,10 @@ class DataExtractor:
     these sources will include CSV files, an API and an S3 bucket.
 
     Attributes:
-        word(str): The word to be guessed, picked randomly from the word_list.
-        word_guessed (list): A list of the letters of the word, with _ for each letter not yet guessed.
-        list_of_guesses(list): A list of the guesses that have already been tried.
+        None
     '''
 
-    # def __init__(self, word_list, num_lives = 5):
-    #     #self.word = random.choice(word_list)
-    #     #self.word_guessed = list('_' * len(self.word))
-    #     #self.list_of_guesses = []
-
-    def read_rds_table(self, db_connector, table_name):
+    def read_rds_table(self, db_connector: DatabaseConnector, table_name: str) -> pd.DataFrame:
         '''
         This method will extract the database table to a pandas DataFrame.
 
@@ -41,31 +33,21 @@ class DataExtractor:
 
         try:
             engine = db_connector.init_db_engine()
-            #engine.execution_options(isolation_level='AUTOCOMMIT').connect()
-
             df = pd.read_sql_table(table_name, engine)
-
-            # with engine.connect() as connection:
-            #     result = connection.execute(text(f"SELECT * FROM {table_name}"))
-            #     print(type(result))
-            #     #print(result[0])
-            #     for row in result:
-            #         print(row)
-            #         break
         except Exception as e:
             print("Exception thrown while reading SQL table from database:", e)
 
         return df
     
-    def retrieve_pdf_data(self, link):
+    def retrieve_pdf_data(self, link: str) -> pd.DataFrame:
         '''
         This method will take in a link to a PDF containing a table as an argument and returns a pandas DataFrame.
 
         Args:
-            link(str): URL of remote PDF file
+            link(str): URL of remote PDF file.
 
         Returns:
-            tabula_df(DataFrame): pandas DataFrame containing table extracted from remote PDF file
+            tabula_df(DataFrame): pandas DataFrame containing table extracted from remote PDF file.
         '''
 
         try:
@@ -77,7 +59,7 @@ class DataExtractor:
 
         return tabula_df
     
-    def list_number_of_stores(self, number_of_stores_endpoint, header_dict):
+    def list_number_of_stores(self, number_of_stores_endpoint: str, header_dict: dict) -> int:
         '''
         This method will return the number of stores to extract.
 
@@ -102,16 +84,15 @@ class DataExtractor:
 
         return number_of_stores
     
-    def retrieve_stores_data(self, retrieve_a_store_endpoint):
+    def retrieve_stores_data(self, retrieve_a_store_endpoint: str) -> pd.DataFrame:
         '''
         This method will extract all the stores from the API saving them in a pandas DataFrame.
 
         Args:
-            number_of_stores_endpoint(str): number of stores endpoint
-            header_dict(dict): a dictionary containing the header details including x-api-key
+            retrieve_a_store_endpoint(str): API endpoint to retrieve a store given a store number.
 
         Returns:
-            stores_df(DataFrame): DataFrame containing data for all stores in the business
+            stores_df(DataFrame): DataFrame containing data for all stores in the business.
         '''
 
         number_of_stores_endpoint = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/number_stores"
@@ -155,7 +136,6 @@ class DataExtractor:
         # Download the file from S3
         response = s3.get_object(Bucket=bucket_name, Key=object_key)
         csv_data = response['Body'].read().decode('utf-8')
-        #print(type(csv_data)) <class 'str'>
         
         # Convert to pandas DataFrame
         df = pd.read_csv(StringIO(csv_data))
@@ -185,23 +165,33 @@ class DataExtractor:
 def main():
     db_connector = DatabaseConnector()
     data_extractor = DataExtractor()
+
+    # Retrieve user data from AWS RDS database
     table_name = 'legacy_users'
     user_data_df = data_extractor.read_rds_table(db_connector, table_name)
-    print(user_data_df.head(3))
     print(f"{len(user_data_df)} rows in legacy users dataframe")
 
+    # Retrieve card details data from PDF in AWS S3 bucket
     link = "https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf"
     pdf_data_length = len(data_extractor.retrieve_pdf_data(link))
     print(f"The table in the PDF has {pdf_data_length} rows")
 
+    # Retrieve stores data from API
     endpoint = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/store_details"
     stores_data_length = len(data_extractor.retrieve_stores_data(endpoint))
     print(f"The table in the Stores DF has {stores_data_length} rows")
 
+    # Retrieve products data from AWS S3 bucket
     s3_uri = "s3://data-handling-public/products.csv"
     products_data_length = len(data_extractor.extract_from_s3(s3_uri))
     print(f"The table in the Products DF has {products_data_length} rows")
 
+    # Retrieve orders data from AWS RDS
+    table_name = 'orders_table'
+    orders_data_df = data_extractor.read_rds_table(db_connector, table_name)
+    print(f"{len(orders_data_df)} rows in orders data dataframe")
+
+    # Retrieve date details data from JSON
     link = "https://data-handling-public.s3.eu-west-1.amazonaws.com/date_details.json"
     json_data = data_extractor.retrieve_json_data(link) 
     json_data_length = len(json_data) 
@@ -209,4 +199,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # Move code in main() here to avoid it being called as part of the namespace when module is imported.
