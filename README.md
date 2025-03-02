@@ -1,44 +1,66 @@
 # multinational-retail-data-centralisation720
 
-# Hangman
-Hangman is a classic game in which a player thinks of a word and the other player tries to guess that word within a certain amount of attempts.
+## Project Overview
+The Multinational Retail Data Centralisation (MRDC) project aims to centralize and streamline the data management processes for a multinational retail company. This project involves integrating various data sources, including legacy systems and modern databases, to provide a unified view of the company's data.
 
-This is an implementation of the Hangman game, where the computer thinks of a word and the user tries to guess it. 
-
-I have learnt how to edit markdowns and design object oriented programs using the Python programming language as result of working on this project.
-
-## TABLE OF CONTENTS
+## Table of Contents
 1. [Installation Instructions](#installation-instructions)
-1. [Usage Instructions](#usage-instructions)
-1. [Project File Structure](#file-structure-of-the-project)
-1. [Licence Info](#license-information)
+2. [Usage Instructions](#usage-instructions)
+3. [Project File Structure](#file-structure-of-the-project)
+4. [License Information](#license-information)
 
+## Installation Instructions
+To set up the project, follow these steps:
 
-## INSTALLATION INSTRUCTIONS
-- Ensure that you have the following packages installed: git, pip, python3 and conda.
-- On your terminal, run `git clone https://github.com/14inc/hangman963.git` to download the project repo to your local machine
-- Navigate to the hangman subdirectory using the `cd hangman963/hangman` 
-- Run `python3 filename.py` for any of the milestone_*.py files in the directory.
-- **NB:** milestone_5.py is the most advanced implementation of the hangman game implemented as per the instructions.
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/14inc/multinational-retail-data-centralisation720.git
+    ```
+2. Navigate to the project directory:
+    ```sh
+    cd multinational-retail-data-centralisation720
+    ```
+3. Initialize the repository and make the first commit:
+    ```sh
+    echo "# multinational-retail-data-centralisation720" >> README.md
+    git init
+    git add README.md
+    git commit -m "first commit"
+    git branch -M main
+    git remote add origin https://github.com/14inc/multinational-retail-data-centralisation720.git
+    git push -u origin main
+    ```
+4.  Contact dogunsade@gmail.com for the db_cred and local_db_creds YAML files to be stored in the same folder as the .py files
 
-## USAGE INSTRUCTIONS
-On your Terminal, run <code>python3 milestone_2.py</code>
+## Usage Instructions
+To use the project, follow these steps:
 
-Also, run <code>python3 milestone_3.py</code> to see the version of this solution that incorporates the use of Python functions.
+1. Ensure you have the required dependencies installed:
+    - Python 3.x
+    - pandas
+    - numpy
+    - SQLAlchemy
+    - psycopg2
+    - boto3
+    - requests
+    - tabula-py
+    - PyYAML
 
-Next, run <code>python3 milestone_4.py</code> to see the version of this solution that incorporates the use of Python classes. It also offers more feedback to the user that helps their guessing. An infinite loop is implemented so you man need to press `CTRL + C` to exit the running program. Please do likewise with *milestone_5.py*
+    You can install these dependencies using the following command:
+    ```sh
+    pip install pandas numpy sqlalchemy psycopg2-binary boto3 requests tabula-py pyyaml
+    ```
 
-Finally, run <code>python3 milestone_5.py</code> to see the final version of this solution that ties all concepts used together. Please note that it has limitations that makes it run in an infinite loop. This is as a result of the instructions provided in the project guidance.
+2. Run the necessary scripts to integrate and process the data from various sources.
 
-Feel free to edit the code to remove these limitations
+## Project File Structure
+The project directory is structured as follows:
 
-## FILE STRUCTURE OF THE PROJECT
-- hangman directory
-    - Python source code files
-- gitignore file
-- README markdown file
+- Python source code files
+- `README.md`: The main README file for the project.
+- `temp.txt`: Temporary file with setup instructions and other notes.
 
-## LICENSE INFORMATION
+## License Information
 MIT License
 
 Copyright (c) 2025 David Adeife Ogunsade
