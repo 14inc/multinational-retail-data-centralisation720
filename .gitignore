@@ -3,6 +3,7 @@ __pycache__
 db_creds.yaml
 local_db_creds.yaml
 notebook.ipynb
+sql_statements.ipynb
 temp.txt
 temp-m2t6-cleaning-notes.txt
 output.csv
