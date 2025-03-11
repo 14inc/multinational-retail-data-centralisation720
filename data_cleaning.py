@@ -75,6 +75,13 @@ class DataCleaning:
         Returns:
             clean_df(DataFrame): cleaned DataFrame containing valid card details
         '''
+
+        # Remove '?' from values in card_number column
+        card_data_df['card_number'] = card_data_df['card_number'].str.replace('?', '', regex=False)
+
+        # Replace all 'NULL' values in dataframe with a NaN
+        card_data_df.replace('NULL', np.nan, inplace=True)
+
         # Drop rows that contain table header information
         card_data_df.drop(card_data_df.loc[card_data_df['card_number'] == 'card_number'].index, inplace=True)
         print(f"Length of df after cleaning phase 1: {len(card_data_df)}")
