@@ -59,6 +59,7 @@ The project directory is structured as follows:
 - Python source code files
 - `README.md`: The main README file for the project.
 - `temp.txt`: Temporary file with setup instructions and other notes.
+- `sql_modelling_statements.ipynb`: A Jupyter Notebook containing the sql statements used for each task in milestone 3.
 
 ## License Information
 MIT License
