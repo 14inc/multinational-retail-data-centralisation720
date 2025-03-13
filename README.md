@@ -59,7 +59,8 @@ The project directory is structured as follows:
 - Python source code files
 - `README.md`: The main README file for the project.
 - `temp.txt`: Temporary file with setup instructions and other notes.
-- `sql_modelling_statements.ipynb`: A Jupyter Notebook containing the sql statements used for each task in milestone 3.
+- `sql_modelling_statements.ipynb`: A Jupyter Notebook containing the sql statements used for each task in milestone 3 NB: There is room for improvement in the presentation. Also repetitions of similar SQL statements in the same tasks is avoided in the documentation i.e. if I which to check the length of the longest Text value in a column for more than one column, I have only documented how to do it for one. This can be improved by adopting the style used in `data_query_statements.ipynb` and implementing the multiple SQL statements as transactions.
+-  `data_query_statements.ipynb`: A Jupyter Notebook containing the sql statements used for each task in milestone 4.
 
 ## License Information
 MIT License
